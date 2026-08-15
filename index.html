@@ -11,12 +11,56 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet"/>
-<script crossorigin="" src="/quan-ly-lop-CP/assets/index-DHZElYMk.js" type="module"></script>
-<link crossorigin="" href="/quan-ly-lop-CP/assets/index-BlzPCnRT.css" rel="stylesheet"/>
+<script crossorigin="" src="/quan-ly-lop/assets/index-DHZElYMk.js" type="module"></script>
+<link crossorigin="" href="/quan-ly-lop/assets/index-BlzPCnRT.css" rel="stylesheet"/>
 
 </head>
 <body>
 
 <div id="root"></div>
+<script>
+  (function () {
+    function textOf(el) {
+      return (el.textContent || "").replace(/\s+/g, " ").trim();
+    }
+
+    function hideFieldByText(labelText) {
+      document.querySelectorAll("label, div, span, p").forEach(function (el) {
+        if (textOf(el) === labelText) {
+          var block = el.parentElement;
+          if (block) block.style.display = "none";
+        }
+      });
+    }
+
+    function hideUnusedScoreSection() {
+      document.querySelectorAll("label, div, span, p").forEach(function (el) {
+        var text = textOf(el);
+        if (text.indexOf("ĐIỂM SỐ") !== -1 && text.indexOf("KỶ LUẬT") !== -1) {
+          el.style.display = "none";
+        }
+        if (text.indexOf("Điểm TX1") === 0) {
+          var txBlock = el.parentElement;
+          if (txBlock) txBlock.style.display = "none";
+        }
+      });
+
+      hideFieldByText("Số lần gọi tên");
+      hideFieldByText("Điểm cộng");
+      hideFieldByText("Số lần vi phạm");
+
+      document.querySelectorAll('input[placeholder="TX1"], input[placeholder="TX2"], input[placeholder="TX3"], input[placeholder="TX4"]').forEach(function (input) {
+        var grid = input.parentElement;
+        if (grid) grid.style.display = "none";
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", hideUnusedScoreSection);
+    new MutationObserver(hideUnusedScoreSection).observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  })();
+</script>
 </body>
 </html>
