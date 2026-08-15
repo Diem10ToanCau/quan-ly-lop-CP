@@ -24,34 +24,41 @@
       return (el.textContent || "").replace(/\s+/g, " ").trim();
     }
 
-    function hideFieldByText(labelText) {
-      document.querySelectorAll("label, div, span, p").forEach(function (el) {
-        if (textOf(el) === labelText) {
-          var block = el.parentElement;
-          if (block) block.style.display = "none";
+    function hideClosestSmallBlock(el) {
+      var block = el;
+      for (var i = 0; i < 4 && block; i += 1) {
+        var text = textOf(block);
+        var inputCount = block.querySelectorAll ? block.querySelectorAll("input").length : 0;
+        if (inputCount > 0 && text.length < 120) {
+          block.style.display = "none";
+          return;
         }
+        block = block.parentElement;
+      }
+      el.style.display = "none";
+    }
+
+    function hideExactText(labelText) {
+      document.querySelectorAll("label, span, p, h3, h4").forEach(function (el) {
+        if (textOf(el) === labelText) hideClosestSmallBlock(el);
       });
     }
 
     function hideUnusedScoreSection() {
-      document.querySelectorAll("label, div, span, p").forEach(function (el) {
+      document.querySelectorAll("label, span, p, h3, h4").forEach(function (el) {
         var text = textOf(el);
-        if (text.indexOf("ĐIỂM SỐ") !== -1 && text.indexOf("KỶ LUẬT") !== -1) {
+        if (text === "ĐIỂM SỐ & KỶ LUẬT") {
           el.style.display = "none";
         }
-        if (text.indexOf("Điểm TX1") === 0) {
-          var txBlock = el.parentElement;
-          if (txBlock) txBlock.style.display = "none";
-        }
+        if (text === "Điểm TX1 - TX4 (để trống nếu chưa có)") hideClosestSmallBlock(el);
       });
 
-      hideFieldByText("Số lần gọi tên");
-      hideFieldByText("Điểm cộng");
-      hideFieldByText("Số lần vi phạm");
+      hideExactText("Số lần gọi tên");
+      hideExactText("Điểm cộng");
+      hideExactText("Số lần vi phạm");
 
       document.querySelectorAll('input[placeholder="TX1"], input[placeholder="TX2"], input[placeholder="TX3"], input[placeholder="TX4"]').forEach(function (input) {
-        var grid = input.parentElement;
-        if (grid) grid.style.display = "none";
+        hideClosestSmallBlock(input);
       });
     }
 
